@@ -1,7 +1,7 @@
 {
   "name": "vtex-apps-framework-api-action",
   "version": "1.0.0",
-  "description": "JavaScript Action Template",
+  "description": "Execute an API request for VTEX Apps Framework",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
@@ -11,19 +11,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "git+https://github.com/vtex/apps-framework-request-action.git"
   },
   "keywords": [
     "GitHub",
     "Actions",
-    "JavaScript"
+    "JavaScript",
+    "VTEX"
   ],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+    "url": "https://github.com/vtex/apps-framework-request-action/issues"
   },
-  "homepage": "https://github.com/actions/javascript-action#readme",
+  "homepage": "https://github.com/vtex/apps-framework-request-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.5",
     "axios": "^0.24.0",
