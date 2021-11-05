@@ -9942,12 +9942,14 @@ async function waitAppReleaseFinalStatus(appId, appReleaseId) {
       if (appReleaseStatus === "failed") {
         throw new Error(`App release failed`)
       }
-      break
+      return
     } else {
       core.info(`App release is not complete. Status: ${appReleaseStatus}`)
       await wait(waitInterval)
     }
   }
+
+  throw new Error('Timeout waiting for app release completion')
 }
 
 function isAppReleaseFinalStatus(appReleaseStatus) {
