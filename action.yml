@@ -1,13 +1,16 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'VTEX Apps Framework API request action'
+description: 'Execute an API request for VTEX Apps Framework'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  request-name:
+    description: 'The name of the request'
     required: true
-    default: '1000'
+  app-specification:
+    description: 'The app specification content'
+    required: false
+    default: ''
 outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
+  status-code:
+    description: 'The status code from the quest'
 runs:
   using: 'node12'
   main: 'dist/index.js'

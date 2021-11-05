@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: npm ci
-    - run: npm test
+    - run: yarn install
+    - run: yarn run test
 
   # test action works running from the graph
   test:
@@ -22,4 +22,5 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ./
       with:
-        milliseconds: 1000
+        request-name: create-app-request
+        app-specification: '{"name":"starter-node-service","vendor":"vtex","version":"0.0.10","services":[{"name":"service","folder":"./","image-name":"vtex-docker/starter-node-service","public":true}]}'

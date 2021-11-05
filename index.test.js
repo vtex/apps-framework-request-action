@@ -1,24 +1,35 @@
-const wait = require('./wait');
-const process = require('process');
-const cp = require('child_process');
-const path = require('path');
+const requestProcessor = require("./request-processor");
+const process = require("process");
+const cp = require("child_process");
+const path = require("path");
 
-test('throws invalid number', async () => {
-  await expect(wait('foo')).rejects.toThrow('milliseconds not a number');
-});
+const appSpecification = {
+  name: "starter-node-service",
+  vendor: "vtex",
+  version: "0.0.10",
+  services: [
+    {
+      name: "service",
+      folder: "./",
+      "image-name": "vtex-docker/starter-node-service",
+      public: true,
+    },
+  ],
+};
 
-test('wait 500 ms', async () => {
-  const start = new Date();
-  await wait(500);
-  const end = new Date();
-  var delta = Math.abs(end - start);
-  expect(delta).toBeGreaterThanOrEqual(500);
+test("send a request to create a release and return status 201", async () => {
+  const statusCode = await requestProcessor(
+    "create-app-release",
+    JSON.stringify(appSpecification)
+  );
+  expect(statusCode).toBe('201');
 });
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = 100;
-  const ip = path.join(__dirname, 'index.js');
-  const result = cp.execSync(`node ${ip}`, {env: process.env}).toString();
+test("test runs", () => {
+  process.env["INPUT_REQUEST-NAME"] = "create-app-release";
+  process.env["INPUT_APP-SPECIFICATION"] = JSON.stringify(appSpecification);
+  const ip = path.join(__dirname, "index.js");
+  const result = cp.execSync(`node ${ip}`, { env: process.env }).toString();
   console.log(result);
-})
+});
