@@ -5,9 +5,13 @@ inputs:
     description: 'The name of the request'
     required: true
   app-specification:
-    description: 'The app specification content'
+    description: 'The app specification content. Required for request-type create-app-release'
     required: false
-    default: ''
+    default: '{}'
+  wait-app-release-complete:
+    description: 'Optional parameter for create-app-release only'
+    required: false
+    default: 'false'
 outputs:
   status-code:
     description: 'The status code from the quest'

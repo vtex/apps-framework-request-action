@@ -20,15 +20,17 @@ const appSpecification = {
 test("send a request to create a release and return status 201", async () => {
   const statusCode = await requestProcessor(
     "create-app-release",
-    JSON.stringify(appSpecification)
+    JSON.stringify(appSpecification),
+    false
   );
-  expect(statusCode).toBe('201');
+  expect(statusCode).toBe("201");
 });
 
 // shows how the runner will run a javascript action with env / stdout protocol
 test.skip("test runs", () => {
   process.env["INPUT_REQUEST-TYPE"] = "create-app-release";
   process.env["INPUT_APP-SPECIFICATION"] = JSON.stringify(appSpecification);
+  process.env["INPUT_WAIT-APP-RELEASE-COMPLETE"] = "true";
   const ip = path.join(__dirname, "index.js");
   const result = cp.execSync(`node ${ip}`, { env: process.env }).toString();
   console.log(result);

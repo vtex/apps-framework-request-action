@@ -9,17 +9,22 @@ You can consume the action by referencing one of the existing branches. Example:
 ```yaml
 uses: vtex/apps-framework-request-action@v1
 with:
-  request-type: create-app-request
+  request-type: create-app-release
   app-specification: '{"name":"app-name","vendor":"vendor-name","version":"0.0.10","services":[{"name":"service","folder":"./","image-name":"vtex-docker/image-name"}]}'
+  wait-app-release-complete: true # Optional
 ```
 
 See the [actions tab](https://github.com/actions/apps-framework-request-action/actions) for runs of this action! :rocket:
 
-`request-type` can be one of the following:
+`request-type` is mandatory and can be one of the following values
 
-- `create-app-request`
+- `create-app-release`
 
-`app-specification` is mandatory only for the `request-type` `create-app-request`. The app-specification can be retrieved `get-vtex-app-metadata-action`:
+The other parameters are required or optional depending on the request type
+
+### create-app-release params
+
+`app-specification`: **mandatory**. It is the parsed content of `vtex.yml` file of your app. The app-specification can be retrieved `get-vtex-app-metadata-action`:
 
 ```yaml
 - name: Get app metadata
@@ -27,7 +32,9 @@ See the [actions tab](https://github.com/actions/apps-framework-request-action/a
   uses: ./.github/actions/get-vtex-app-metadata
 ```
 
-Then you can reference it with `${{steps.app-metadata.outputs.app-specification}}`.
+Then you can reference it with `${{steps.app-metadata.outputs.app-specification}}`
+
+`wait-app-release-complete`: **optional**. Default value: `false`. If `true`, the app `create-app-release` action will finish only when the deploy succeeds or fails.
 
 ## Contribute
 
