@@ -9888,9 +9888,10 @@ async function executeCreateAppRelease(appSpecification) {
   const payload = buildPayloadForCreateAppRelease(parsedAppSpecification)
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/releases`
   core.info(`Calling ${apiUrl}`)
-  core.info(`Payload: ${JSON.stringify(payload, null, 2)}`)
+  core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`)
   const response = await axios.post(apiUrl, payload)
   if (response.status === 201) {
+    core.info('Successfully created app release')
     return response.status.toString();
   } else {
     throw new Error(`Error creating app release: ${response.status}. Response body: ${response.data}`)
@@ -10071,9 +10072,8 @@ const requestProcessor = __nccwpck_require__(657);
 
 async function run() {
   try {
-    const requestName = core.getInput('request-name');
+    const requestName = core.getInput('request-type');
     const appSpecification = core.getInput('app-specification');
-    core.info(`Executing ${requestName} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     await requestProcessor(requestName, appSpecification);

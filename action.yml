@@ -1,7 +1,7 @@
 name: 'VTEX Apps Framework API request action'
 description: 'Execute an API request for VTEX Apps Framework'
 inputs:
-  request-name:
+  request-type:
     description: 'The name of the request'
     required: true
   app-specification:

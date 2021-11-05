@@ -9,11 +9,25 @@ You can consume the action by referencing one of the existing branches. Example:
 ```yaml
 uses: vtex/apps-framework-request-action@v1
 with:
-  request-name: create-app-request
+  request-type: create-app-request
   app-specification: '{"name":"app-name","vendor":"vendor-name","version":"0.0.10","services":[{"name":"service","folder":"./","image-name":"vtex-docker/image-name"}]}'
 ```
 
 See the [actions tab](https://github.com/actions/apps-framework-request-action/actions) for runs of this action! :rocket:
+
+`request-type` can be one of the following:
+
+- `create-app-request`
+
+`app-specification` is mandatory only for the `request-type` `create-app-request`. The app-specification can be retrieved `get-vtex-app-metadata-action`:
+
+```yaml
+- name: Get app metadata
+  id: app-metadata
+  uses: ./.github/actions/get-vtex-app-metadata
+```
+
+Then you can reference it with `${{steps.app-metadata.outputs.app-specification}}`.
 
 ## Contribute
 
