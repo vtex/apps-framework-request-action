@@ -9873,12 +9873,14 @@ const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 const requestProcessor = async function (
   requestName,
   appSpecification,
+  appReleaseType,
   waitAppReleaseComplete
 ) {
   switch (requestName) {
     case "create-app-release":
       return await executeCreateAppRelease(
         appSpecification,
+        appReleaseType,
         waitAppReleaseComplete
       );
     default:
@@ -9888,6 +9890,7 @@ const requestProcessor = async function (
 
 async function executeCreateAppRelease(
   appSpecification,
+  appReleaseType,
   waitAppReleaseComplete
 ) {
   if (!appSpecification) {
@@ -9895,7 +9898,7 @@ async function executeCreateAppRelease(
   }
   const parsedAppSpecification = parseAppSpecification(appSpecification);
   const appId = `${parsedAppSpecification.vendor}.${parsedAppSpecification.name}`;
-  const payload = buildPayloadForCreateAppRelease(parsedAppSpecification);
+  const payload = buildPayloadForCreateAppRelease(parsedAppSpecification, appReleaseType);
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/releases`;
   core.info(`Calling ${apiUrl}`);
   core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`);
@@ -9917,9 +9920,9 @@ async function executeCreateAppRelease(
   }
 }
 
-function buildPayloadForCreateAppRelease(appSpecification) {
+function buildPayloadForCreateAppRelease(appSpecification, appReleaseType,) {
   return {
-    context: "staging",
+    releaseType: appReleaseType,
     appSpecification,
   };
 }
@@ -10144,15 +10147,23 @@ const requestProcessor = __nccwpck_require__(657);
 
 async function run() {
   try {
-    const requestName = core.getInput('request-type');
-    const appSpecification = core.getInput('app-specification');
-    const waitAppReleaseComplete = new Boolean(core.getInput('wait-app-release-complete'));
+    const requestName = core.getInput("request-type");
+    const appSpecification = core.getInput("app-specification");
+    const appReleaseType = core.getInput("app-release-type");
+    const waitAppReleaseComplete = core.getBooleanInput(
+      "wait-app-release-complete"
+    );
 
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await requestProcessor(requestName, appSpecification, waitAppReleaseComplete);
-    core.info((new Date()).toTimeString());
+    core.debug(new Date().toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const statusCode = await requestProcessor(
+      requestName,
+      appSpecification,
+      appReleaseType,
+      waitAppReleaseComplete
+    );
+    core.info(new Date().toTimeString());
 
-    core.setOutput('time', new Date().toTimeString());
+    core.setOutput("statusCode", statusCode);
   } catch (error) {
     core.setFailed(error.message);
   }
