@@ -8,6 +8,10 @@ inputs:
     description: 'The app specification content. Required for request-type create-app-release'
     required: false
     default: '{}'
+  release-type:
+    description: 'Indicates the type of release that will be created: development, unpublished, or published'
+    required: false
+    default: 'development'
   wait-app-release-complete:
     description: 'Optional parameter for create-app-release only'
     required: false

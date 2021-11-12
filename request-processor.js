@@ -7,12 +7,14 @@ const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 const requestProcessor = async function (
   requestName,
   appSpecification,
+  appReleaseType,
   waitAppReleaseComplete
 ) {
   switch (requestName) {
     case "create-app-release":
       return await executeCreateAppRelease(
         appSpecification,
+        appReleaseType,
         waitAppReleaseComplete
       );
     default:
@@ -22,6 +24,7 @@ const requestProcessor = async function (
 
 async function executeCreateAppRelease(
   appSpecification,
+  appReleaseType,
   waitAppReleaseComplete
 ) {
   if (!appSpecification) {
@@ -29,7 +32,7 @@ async function executeCreateAppRelease(
   }
   const parsedAppSpecification = parseAppSpecification(appSpecification);
   const appId = `${parsedAppSpecification.vendor}.${parsedAppSpecification.name}`;
-  const payload = buildPayloadForCreateAppRelease(parsedAppSpecification);
+  const payload = buildPayloadForCreateAppRelease(parsedAppSpecification, appReleaseType);
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/releases`;
   core.info(`Calling ${apiUrl}`);
   core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`);
@@ -51,9 +54,9 @@ async function executeCreateAppRelease(
   }
 }
 
-function buildPayloadForCreateAppRelease(appSpecification) {
+function buildPayloadForCreateAppRelease(appSpecification, appReleaseType,) {
   return {
-    context: "staging",
+    releaseType: appReleaseType,
     appSpecification,
   };
 }
