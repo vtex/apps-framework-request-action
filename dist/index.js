@@ -9873,14 +9873,14 @@ const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 const requestProcessor = async function (
   requestName,
   appSpecification,
-  appVersionType,
+  appVersionVisibility,
   waitAppVersionComplete
 ) {
   switch (requestName) {
     case "create-app-version":
       return await executeCreateAppVersion(
         appSpecification,
-        appVersionType,
+        appVersionVisibility,
         waitAppVersionComplete
       );
     default:
@@ -9890,7 +9890,7 @@ const requestProcessor = async function (
 
 async function executeCreateAppVersion(
   appSpecification,
-  appVersionType,
+  appVersionVisibility,
   waitAppVersionComplete
 ) {
   if (!appSpecification) {
@@ -9898,7 +9898,7 @@ async function executeCreateAppVersion(
   }
   const parsedAppSpecification = parseAppSpecification(appSpecification);
   const appId = `${parsedAppSpecification.vendor}.${parsedAppSpecification.name}`;
-  const payload = buildPayloadForCreateAppVersion(parsedAppSpecification, appVersionType);
+  const payload = buildPayloadForCreateAppVersion(parsedAppSpecification, appVersionVisibility);
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/versions`;
   core.info(`Calling ${apiUrl}`);
   core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`);
@@ -9920,9 +9920,9 @@ async function executeCreateAppVersion(
   }
 }
 
-function buildPayloadForCreateAppVersion(appSpecification, appVersionType,) {
+function buildPayloadForCreateAppVersion(appSpecification, appVersionVisibility,) {
   return {
-    appVersionType: appVersionType,
+    appVersionVisibility: appVersionVisibility,
     appSpecification,
   };
 }
@@ -10149,7 +10149,7 @@ async function run() {
   try {
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
-    const appVersionType = core.getInput("app-version-type");
+    const appVersionVisibility = core.getInput("app-version-visibility");
     const waitAppVersionComplete = core.getBooleanInput(
       "wait-app-version-complete"
     );
@@ -10158,7 +10158,7 @@ async function run() {
     const statusCode = await requestProcessor(
       requestName,
       appSpecification,
-      appVersionType,
+      appVersionVisibility,
       waitAppVersionComplete
     );
     core.info(new Date().toTimeString());
