@@ -5,7 +5,7 @@ async function run() {
   try {
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
-    const appVersionVisibility = core.getInput("app-version-visibility");
+    const appVersionVisibility = core.getInput("version-visibility");
     const waitAppVersionComplete = core.getBooleanInput(
       "wait-app-version-complete"
     );
