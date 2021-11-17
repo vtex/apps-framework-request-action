@@ -5,7 +5,7 @@ async function run() {
   try {
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
-    const appVersionType = core.getInput("app-version-type");
+    const appVersionVisibility = core.getInput("app-version-visibility");
     const waitAppVersionComplete = core.getBooleanInput(
       "wait-app-version-complete"
     );
@@ -14,7 +14,7 @@ async function run() {
     const statusCode = await requestProcessor(
       requestName,
       appSpecification,
-      appVersionType,
+      appVersionVisibility,
       waitAppVersionComplete
     );
     core.info(new Date().toTimeString());

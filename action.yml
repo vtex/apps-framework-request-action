@@ -8,8 +8,8 @@ inputs:
     description: 'The app specification content. Required for request-type create-app-version'
     required: false
     default: '{}'
-  version-type:
-    description: 'Indicates the type of version that will be created: development, unpublished, or published'
+  version-visibility:
+    description: 'Indicates the version visibility that will be used: development, unpublished, or published'
     required: false
     default: 'development'
   wait-app-version-complete:
