@@ -17,9 +17,9 @@ const appSpecification = {
   ],
 };
 
-test("send a request to create a release and return status 201", async () => {
+test("send a request to create a version and return status 201", async () => {
   const statusCode = await requestProcessor(
-    "create-app-release",
+    "create-app-version",
     JSON.stringify(appSpecification),
     false
   );
@@ -28,9 +28,9 @@ test("send a request to create a release and return status 201", async () => {
 
 // shows how the runner will run a javascript action with env / stdout protocol
 test.skip("test runs", () => {
-  process.env["INPUT_REQUEST-TYPE"] = "create-app-release";
+  process.env["INPUT_REQUEST-TYPE"] = "create-app-version";
   process.env["INPUT_APP-SPECIFICATION"] = JSON.stringify(appSpecification);
-  process.env["INPUT_WAIT-APP-RELEASE-COMPLETE"] = "true";
+  process.env["INPUT_WAIT-APP-VERSION-COMPLETE"] = "true";
   const ip = path.join(__dirname, "index.js");
   const result = cp.execSync(`node ${ip}`, { env: process.env }).toString();
   console.log(result);

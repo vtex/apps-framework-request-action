@@ -5,17 +5,17 @@ async function run() {
   try {
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
-    const appReleaseType = core.getInput("app-release-type");
-    const waitAppReleaseComplete = core.getBooleanInput(
-      "wait-app-release-complete"
+    const appVersionType = core.getInput("app-version-type");
+    const waitAppVersionComplete = core.getBooleanInput(
+      "wait-app-version-complete"
     );
 
     core.debug(new Date().toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     const statusCode = await requestProcessor(
       requestName,
       appSpecification,
-      appReleaseType,
-      waitAppReleaseComplete
+      appVersionType,
+      waitAppVersionComplete
     );
     core.info(new Date().toTimeString());
 

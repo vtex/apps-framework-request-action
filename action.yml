@@ -5,15 +5,15 @@ inputs:
     description: 'The name of the request'
     required: true
   app-specification:
-    description: 'The app specification content. Required for request-type create-app-release'
+    description: 'The app specification content. Required for request-type create-app-version'
     required: false
     default: '{}'
-  release-type:
-    description: 'Indicates the type of release that will be created: development, unpublished, or published'
+  version-type:
+    description: 'Indicates the type of version that will be created: development, unpublished, or published'
     required: false
     default: 'development'
-  wait-app-release-complete:
-    description: 'Optional parameter for create-app-release only'
+  wait-app-version-complete:
+    description: 'Optional parameter for create-app-version only'
     required: false
     default: 'false'
 outputs:

@@ -9873,56 +9873,56 @@ const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 const requestProcessor = async function (
   requestName,
   appSpecification,
-  appReleaseType,
-  waitAppReleaseComplete
+  appVersionType,
+  waitAppVersionComplete
 ) {
   switch (requestName) {
-    case "create-app-release":
-      return await executeCreateAppRelease(
+    case "create-app-version":
+      return await executeCreateAppVersion(
         appSpecification,
-        appReleaseType,
-        waitAppReleaseComplete
+        appVersionType,
+        waitAppVersionComplete
       );
     default:
       throw new Error(`Unknown request name: ${requestName}`);
   }
 };
 
-async function executeCreateAppRelease(
+async function executeCreateAppVersion(
   appSpecification,
-  appReleaseType,
-  waitAppReleaseComplete
+  appVersionType,
+  waitAppVersionComplete
 ) {
   if (!appSpecification) {
     throw new Error("app-specification is required");
   }
   const parsedAppSpecification = parseAppSpecification(appSpecification);
   const appId = `${parsedAppSpecification.vendor}.${parsedAppSpecification.name}`;
-  const payload = buildPayloadForCreateAppRelease(parsedAppSpecification, appReleaseType);
-  const apiUrl = `${serviceBaseUrl}/apps/${appId}/releases`;
+  const payload = buildPayloadForCreateAppVersion(parsedAppSpecification, appVersionType);
+  const apiUrl = `${serviceBaseUrl}/apps/${appId}/versions`;
   core.info(`Calling ${apiUrl}`);
   core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`);
   const response = await axios.post(apiUrl, payload);
   if (response.status === 201) {
-    const appReleaseId = response.data.id;
+    const appVersionId = response.data.id;
     core.info(
-      `Successfully submitted app release. App release id: ${appReleaseId}`
+      `Successfully submitted app version. App version id: ${appVersionId}`
     );
-    if (waitAppReleaseComplete) {
-      core.info("Waiting for app release completion")
-      await waitAppReleaseFinalStatus(appId, appReleaseId)
+    if (waitAppVersionComplete) {
+      core.info("Waiting for app version completion")
+      await waitAppVersionFinalStatus(appId, appVersionId)
     }
     return response.status.toString();
   } else {
     throw new Error(
-      `Error creating app release: ${response.status}. Response body: ${response.data}`
+      `Error creating app version: ${response.status}. Response body: ${response.data}`
     );
   }
 }
 
-function buildPayloadForCreateAppRelease(appSpecification, appReleaseType,) {
+function buildPayloadForCreateAppVersion(appSpecification, appVersionType,) {
   return {
-    releaseType: appReleaseType,
+    appVersionType: appVersionType,
     appSpecification,
   };
 }
@@ -9934,29 +9934,29 @@ function parseAppSpecification(appSpecification) {
 const waitInterval = 10 * 1000;
 const timeout = 5 * 60 * 1000;
 
-async function waitAppReleaseFinalStatus(appId, appReleaseId) {
+async function waitAppVersionFinalStatus(appId, appVersionId) {
   const maxCounter = Math.floor(timeout / waitInterval)
   let counter = 0
   while (counter < maxCounter) {
     counter++
-    const appReleaseStatus = await fetchAppReleaseStatus(appId, appReleaseId);
-    if (isAppReleaseFinalStatus(appReleaseStatus)) {
-      core.info(`App release is complete. Status: ${appReleaseStatus}`)
-      if (appReleaseStatus === "failed") {
-        throw new Error(`App release failed`)
+    const appVersionStatus = await fetchAppVersionStatus(appId, appVersionId);
+    if (isAppVersionFinalStatus(appVersionStatus)) {
+      core.info(`App version is complete. Status: ${appVersionStatus}`)
+      if (appVersionStatus === "failed") {
+        throw new Error(`App version failed`)
       }
       return
     } else {
-      core.info(`App release is not complete. Status: ${appReleaseStatus}`)
+      core.info(`App version is not complete. Status: ${appVersionStatus}`)
       await wait(waitInterval)
     }
   }
 
-  throw new Error('Timeout waiting for app release completion')
+  throw new Error('Timeout waiting for app version completion')
 }
 
-function isAppReleaseFinalStatus(appReleaseStatus) {
-  return appReleaseStatus === "successful" || appReleaseStatus === "failed";
+function isAppVersionFinalStatus(appVersionStatus) {
+  return appVersionStatus === "successful" || appVersionStatus === "failed";
 }
 
 function wait(milliseconds) {
@@ -9965,21 +9965,21 @@ function wait(milliseconds) {
   })
 }
 
-async function fetchAppReleaseStatus(appId, appReleaseId) {
-  const apiUrl = `${serviceBaseUrl}/apps/${appId}/releases/${appReleaseId}`;
+async function fetchAppVersionStatus(appId, appVersionId) {
+  const apiUrl = `${serviceBaseUrl}/apps/${appId}/versions/${appVersionId}`;
   try {
     const response = await axios.get(apiUrl);
     if (response.status === 200) {
-      const appRelease = response.data;
-      return appRelease.status;
+      const appVersion = response.data;
+      return appVersion.status;
     } else {
       core.warning(
-        `Error fetching app release status: ${response.status}. Response body: ${response.data}`
+        `Error fetching app version  status: ${response.status}. Response body: ${response.data}`
       );
       return "unknown";
     }
   } catch (error) {
-    core.warning(`Error fetching app release status: ${error}`);
+    core.warning(`Error fetching app version status: ${error}`);
     return "unknown";
   }
 }
@@ -10149,17 +10149,17 @@ async function run() {
   try {
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
-    const appReleaseType = core.getInput("app-release-type");
-    const waitAppReleaseComplete = core.getBooleanInput(
-      "wait-app-release-complete"
+    const appVersionType = core.getInput("app-version-type");
+    const waitAppVersionComplete = core.getBooleanInput(
+      "wait-app-version-complete"
     );
 
     core.debug(new Date().toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     const statusCode = await requestProcessor(
       requestName,
       appSpecification,
-      appReleaseType,
-      waitAppReleaseComplete
+      appVersionType,
+      waitAppVersionComplete
     );
     core.info(new Date().toTimeString());
 
