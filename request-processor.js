@@ -32,32 +32,58 @@ async function executeCreateAppVersion(
   }
   const parsedAppSpecification = parseAppSpecification(appSpecification);
   const appId = `${parsedAppSpecification.vendor}.${parsedAppSpecification.name}`;
-  const payload = buildPayloadForCreateAppVersion(parsedAppSpecification, appVersionVisibility);
+  const payload = buildPayloadForCreateAppVersion(
+    parsedAppSpecification,
+    appVersionVisibility
+  );
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/versions`;
   core.info(`Calling ${apiUrl}`);
   core.debug(`Payload: ${JSON.stringify(payload, null, 2)}`);
-  const response = await axios.post(apiUrl, payload);
+
+  let response;
+  try {
+    response = await axios.post(apiUrl, payload);
+  } catch (error) {
+    if (error.isAxiosError) {
+      throw new Error(buildErrorMessage(error.response));
+    }
+    throw error;
+  }
+
   if (response.status === 201) {
     const appVersionId = response.data.id;
     core.info(
       `Successfully submitted app version. App version id: ${appVersionId}`
     );
     if (waitAppVersionComplete) {
-      core.info("Waiting for app version completion")
-      await waitAppVersionFinalStatus(appId, appVersionId)
+      core.info("Waiting for app version completion");
+      await waitAppVersionFinalStatus(appId, appVersionId);
     }
     return response.status.toString();
   } else {
-    throw new Error(
-      `Error creating app version: ${response.status}. Response body: ${response.data}`
-    );
+    throw new Error(buildErrorMessage(response));
   }
 }
 
-function buildPayloadForCreateAppVersion(appSpecification, appVersionVisibility,) {
+function buildErrorMessage(serverResponse) {
+  return `Error creating app version: ${serverResponse.status}. Response body: ${formatErrorMessageBody(serverResponse.data)}`;
+}
+
+function formatErrorMessageBody(responseData) {
+  try {
+    return JSON.stringify(responseData, null, 2);
+  } catch (error) {
+    return responseData;
+  }
+}
+
+function buildPayloadForCreateAppVersion(
+  appSpecification,
+  appVersionVisibility
+) {
   return {
-    appVersionVisibility: appVersionVisibility,
     appSpecification,
+    appVersionVisibility,
   };
 }
 
@@ -69,24 +95,24 @@ const waitInterval = 10 * 1000;
 const timeout = 5 * 60 * 1000;
 
 async function waitAppVersionFinalStatus(appId, appVersionId) {
-  const maxCounter = Math.floor(timeout / waitInterval)
-  let counter = 0
+  const maxCounter = Math.floor(timeout / waitInterval);
+  let counter = 0;
   while (counter < maxCounter) {
-    counter++
+    counter++;
     const appVersionStatus = await fetchAppVersionStatus(appId, appVersionId);
     if (isAppVersionFinalStatus(appVersionStatus)) {
-      core.info(`App version is complete. Status: ${appVersionStatus}`)
+      core.info(`App version is complete. Status: ${appVersionStatus}`);
       if (appVersionStatus === "failed") {
-        throw new Error(`App version failed`)
+        throw new Error(`App version failed`);
       }
-      return
+      return;
     } else {
-      core.info(`App version is not complete. Status: ${appVersionStatus}`)
-      await wait(waitInterval)
+      core.info(`App version is not complete. Status: ${appVersionStatus}`);
+      await wait(waitInterval);
     }
   }
 
-  throw new Error('Timeout waiting for app version completion')
+  throw new Error("Timeout waiting for app version completion");
 }
 
 function isAppVersionFinalStatus(appVersionStatus) {
@@ -95,8 +121,8 @@ function isAppVersionFinalStatus(appVersionStatus) {
 
 function wait(milliseconds) {
   return new Promise((resolve) => {
-    setTimeout(() => resolve("done"), milliseconds)
-  })
+    setTimeout(() => resolve("done"), milliseconds);
+  });
 }
 
 async function fetchAppVersionStatus(appId, appVersionId) {

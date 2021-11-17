@@ -21,6 +21,7 @@ test("send a request to create a version and return status 201", async () => {
   const statusCode = await requestProcessor(
     "create-app-version",
     JSON.stringify(appSpecification),
+    'development',
     false
   );
   expect(statusCode).toBe("201");
