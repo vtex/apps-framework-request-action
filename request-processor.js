@@ -78,7 +78,9 @@ async function executeCreateAppVersion(
 }
 
 function buildErrorMessage(serverResponse) {
-  return `Error creating app version: ${serverResponse.status}. Response body: ${formatErrorMessageBody(serverResponse.data)}`;
+  const status = serverResponse ? serverResponse.status : "unknown";
+  const body = serverResponse ? formatErrorMessageBody(serverResponse.data) : "";
+  return `Error creating app version: HTTP status ${status}. Response body: ${body}`;
 }
 
 function formatErrorMessageBody(responseData) {
