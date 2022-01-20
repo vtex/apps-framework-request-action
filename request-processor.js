@@ -2,8 +2,7 @@ const core = require("@actions/core");
 const yaml = require("js-yaml");
 const axios = require("axios");
 
-// const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
-const serviceBaseUrl = "http://localhost:3000";
+const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 
 const requestProcessor = async function (
   appKey,
