@@ -57,7 +57,7 @@ async function executeCreateAppVersion(
     });
   } catch (error) {
     if (error.isAxiosError) {
-      throw new Error(buildErrorMessage(error.response));
+      throw new Error(buildErrorMessage(error.response, error));
     }
     throw error;
   }
@@ -77,10 +77,14 @@ async function executeCreateAppVersion(
   }
 }
 
-function buildErrorMessage(serverResponse) {
-  const status = serverResponse ? serverResponse.status : "unknown";
-  const body = serverResponse ? formatErrorMessageBody(serverResponse.data) : "";
-  return `Error creating app version: HTTP status ${status}. Response body: ${body}`;
+function buildErrorMessage(serverResponse, err) {
+  if (serverResponse) {
+    const { status, data } = serverResponse;
+    const body = formatErrorMessageBody(data);
+    return `Error creating app version: HTTP status ${status}. Response body: ${body}`;
+  } else {
+    return `Error creating app version: ${err}`;
+  }
 }
 
 function formatErrorMessageBody(responseData) {
