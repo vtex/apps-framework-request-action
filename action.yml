@@ -1,6 +1,12 @@
 name: 'VTEX Apps Framework API request action'
 description: 'Execute an API request for VTEX Apps Framework'
 inputs:
+  vtex-app-key:
+    description: 'The app key that will be used to call VTEX API'
+    required: true
+  vtex-app-token:
+    description: 'The app token that will be used to call VTEX API'
+    required: true
   request-type:
     description: 'The name of the request'
     required: true

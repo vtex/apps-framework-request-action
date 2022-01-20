@@ -2,9 +2,12 @@ const core = require("@actions/core");
 const yaml = require("js-yaml");
 const axios = require("axios");
 
-const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
+// const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
+const serviceBaseUrl = "http://localhost:3000";
 
 const requestProcessor = async function (
+  appKey,
+  appToken,
   requestName,
   appSpecification,
   appVersionVisibility,
@@ -13,6 +16,8 @@ const requestProcessor = async function (
   switch (requestName) {
     case "create-app-version":
       return await executeCreateAppVersion(
+        appKey,
+        appToken,
         appSpecification,
         appVersionVisibility,
         waitAppVersionComplete
@@ -23,6 +28,8 @@ const requestProcessor = async function (
 };
 
 async function executeCreateAppVersion(
+  appKey,
+  appToken,
   appSpecification,
   appVersionVisibility,
   waitAppVersionComplete
@@ -42,7 +49,12 @@ async function executeCreateAppVersion(
 
   let response;
   try {
-    response = await axios.post(apiUrl, payload);
+    response = await axios.post(apiUrl, payload, {
+      headers: {
+        "X-VTEX-API-AppKey": appKey,
+        "X-VTEX-API-AppToken": appToken,
+      }
+    });
   } catch (error) {
     if (error.isAxiosError) {
       throw new Error(buildErrorMessage(error.response));

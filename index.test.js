@@ -1,12 +1,14 @@
+require('dotenv').config()
 const requestProcessor = require("./request-processor");
 const process = require("process");
 const cp = require("child_process");
 const path = require("path");
+const { v4: uuidv4 } = require('uuid');
 
 const appSpecification = {
   name: "starter-node-service",
   vendor: "vtex",
-  version: "0.0.10",
+  version: `1.0.0-${uuidv4()}`,
   services: [
     {
       name: "service",
@@ -17,8 +19,12 @@ const appSpecification = {
   ],
 };
 
+jest.setTimeout(10000)
+
 test("send a request to create a version and return status 201", async () => {
   const statusCode = await requestProcessor(
+    process.env.VTEX_APP_KEY,
+    process.env.VTEX_APP_TOKEN,
     "create-app-version",
     JSON.stringify(appSpecification),
     'development',

@@ -18,8 +18,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - name: Set App Specification content
+      run: echo 'APP_SPEC={"name":"starter-node-service","vendor":"vtex","version":"1.0.0-'$RANDOM-$RANDOM-$RANDOM'","services":[{"name":"service","folder":"./","image-name":"vtex-docker/starter-node-service","public":true}]}' >> $GITHUB_ENV
+      shell: bash
+
     - uses: actions/checkout@v2
     - uses: ./
       with:
+        vtex-app-key: ${{ secrets.VTEX_APP_KEY }}
+        vtex-app-token: ${{ secrets.VTEX_APP_TOKEN }}
         request-type: create-app-version
-        app-specification: '{"name":"starter-node-service","vendor":"vtex","version":"0.0.10","services":[{"name":"service","folder":"./","image-name":"vtex-docker/starter-node-service","public":true}]}'
+        app-specification: ${{ env.APP_SPEC }}

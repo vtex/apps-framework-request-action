@@ -9868,9 +9868,12 @@ const core = __nccwpck_require__(2186);
 const yaml = __nccwpck_require__(1917);
 const axios = __nccwpck_require__(6545);
 
-const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
+// const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
+const serviceBaseUrl = "http://localhost:3000";
 
 const requestProcessor = async function (
+  appKey,
+  appToken,
   requestName,
   appSpecification,
   appVersionVisibility,
@@ -9879,6 +9882,8 @@ const requestProcessor = async function (
   switch (requestName) {
     case "create-app-version":
       return await executeCreateAppVersion(
+        appKey,
+        appToken,
         appSpecification,
         appVersionVisibility,
         waitAppVersionComplete
@@ -9889,6 +9894,8 @@ const requestProcessor = async function (
 };
 
 async function executeCreateAppVersion(
+  appKey,
+  appToken,
   appSpecification,
   appVersionVisibility,
   waitAppVersionComplete
@@ -9908,7 +9915,12 @@ async function executeCreateAppVersion(
 
   let response;
   try {
-    response = await axios.post(apiUrl, payload);
+    response = await axios.post(apiUrl, payload, {
+      headers: {
+        "X-VTEX-API-AppKey": appKey,
+        "X-VTEX-API-AppToken": appToken,
+      }
+    });
   } catch (error) {
     if (error.isAxiosError) {
       throw new Error(buildErrorMessage(error.response));
@@ -10173,6 +10185,8 @@ const requestProcessor = __nccwpck_require__(657);
 
 async function run() {
   try {
+    const appKey = core.getInput("vtex-app-key");
+    const appToken = core.getInput("vtex-app-token");
     const requestName = core.getInput("request-type");
     const appSpecification = core.getInput("app-specification");
     const appVersionVisibility = core.getInput("version-visibility");
@@ -10182,6 +10196,8 @@ async function run() {
 
     core.debug(new Date().toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     const statusCode = await requestProcessor(
+      appKey,
+      appToken,
       requestName,
       appSpecification,
       appVersionVisibility,
