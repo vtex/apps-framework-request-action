@@ -9950,10 +9950,7 @@ async function executeCreateAppVersion(
   let response;
   try {
     response = await axios.post(apiUrl, payload, {
-      headers: {
-        "X-VTEX-API-AppKey": appKey,
-        "X-VTEX-API-AppToken": appToken,
-      }
+      headers: createVtexAuthHeaders(appKey, appToken),
     });
   } catch (error) {
     if (error.isAxiosError) {
@@ -10043,10 +10040,12 @@ function wait(milliseconds) {
   });
 }
 
-async function fetchAppVersionStatus(appId, appVersionId) {
+async function fetchAppVersionStatus(appKey, appToken, appId, appVersionId) {
   const apiUrl = `${serviceBaseUrl}/apps/${appId}/versions/${appVersionId}`;
   try {
-    const response = await axios.get(apiUrl);
+    const response = await axios.get(apiUrl, {
+      headers: createVtexAuthHeaders(appKey, appToken),
+    });
     if (response.status === 200) {
       const appVersion = response.data;
       return appVersion.status;
@@ -10060,6 +10059,13 @@ async function fetchAppVersionStatus(appId, appVersionId) {
     core.warning(`Error fetching app version status: ${error}`);
     return "unknown";
   }
+}
+
+function createVtexAuthHeaders(appKey, appToken) {
+  return {
+    "X-VTEX-API-AppKey": appKey,
+    "X-VTEX-API-AppToken": appToken,
+  };
 }
 
 module.exports = requestProcessor;
