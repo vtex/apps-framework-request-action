@@ -9868,8 +9868,7 @@ const core = __nccwpck_require__(2186);
 const yaml = __nccwpck_require__(1917);
 const axios = __nccwpck_require__(6545);
 
-// const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
-const serviceBaseUrl = "http://localhost:3000";
+const serviceBaseUrl = "https://apps-framework-api-beta.vtex.io";
 
 const requestProcessor = async function (
   appKey,
