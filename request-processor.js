@@ -65,7 +65,7 @@ async function executeCreateAppVersion(
     );
     if (waitAppVersionComplete) {
       core.info("Waiting for app version completion");
-      await waitAppVersionFinalStatus(appId, appVersionId);
+      await waitAppVersionFinalStatus(appKey, appToken, appId, appVersionId);
     }
     return response.status.toString();
   } else {
@@ -108,12 +108,12 @@ function parseAppSpecification(appSpecification) {
 const waitInterval = 10 * 1000;
 const timeout = 5 * 60 * 1000;
 
-async function waitAppVersionFinalStatus(appId, appVersionId) {
+async function waitAppVersionFinalStatus(appKey, appToken, appId, appVersionId) {
   const maxCounter = Math.floor(timeout / waitInterval);
   let counter = 0;
   while (counter < maxCounter) {
     counter++;
-    const appVersionStatus = await fetchAppVersionStatus(appId, appVersionId);
+    const appVersionStatus = await fetchAppVersionStatus(appKey, appToken, appId, appVersionId);
     if (isAppVersionFinalStatus(appVersionStatus)) {
       core.info(`App version is complete. Status: ${appVersionStatus}`);
       if (appVersionStatus === "failed") {
