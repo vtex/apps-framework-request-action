@@ -27,7 +27,7 @@
   "homepage": "https://github.com/vtex/apps-framework-request-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.5",
-    "axios": "^0.25.0",
+    "axios": "^1.2.5",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
